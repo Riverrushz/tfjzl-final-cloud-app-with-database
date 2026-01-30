@@ -75,6 +75,21 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     content = models.TextField()
 
+class Enrollment(models.Model):
+    AUDIT = 'audit'
+    HONOR = 'honor'
+    BETA = 'BETA'
+    COURSE_MODES = [
+        (AUDIT, 'Audit'),
+        (HONOR, 'Honor'),
+        (BETA, 'BETA')
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    date_enrolled = models.DateField(default=now)
+    mode = models.CharField(max_length=5, choices=COURSE_MODES, default=AUDIT)
+    rating = models.FloatField(default=5.0)
+
 
 class Question(models.Model):
     course = models.ForeignKey(Course, on_delete = models.CASCADE)
@@ -96,22 +111,10 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete = models.CASCADE)
     content = models.CharField(max_length=200)
-    correctChoice = models.BooleanField(default=False)
+    is_correct = models.BooleanField(default=False)
     
-class Enrollment(models.Model):
-    AUDIT = 'audit'
-    HONOR = 'honor'
-    BETA = 'BETA'
-    COURSE_MODES = [
-        (AUDIT, 'Audit'),
-        (HONOR, 'Honor'),
-        (BETA, 'BETA')
-    ]
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    date_enrolled = models.DateField(default=now)
-    mode = models.CharField(max_length=5, choices=COURSE_MODES, default=AUDIT)
-    rating = models.FloatField(default=5.0)
+
+
 
 class Submission(models.Model):
     enrollment = models.ForeignKey(Enrollment,on_delete = models.CASCADE)
